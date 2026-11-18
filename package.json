@@ -1,0 +1,8 @@
+{
+  "name": "requests-workflow",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Локальная очередь заявок с проверкой повторов и приоритетами",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=22" }
+}

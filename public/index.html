@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fbfaf7">
+  <title>Заявки</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#queue">К списку заявок</a>
+  <div class="page">
+    <header class="page-header">
+      <div><h1>Заявки</h1><p>Проверка входящих обращений и очередь работы</p></div>
+      <div class="header-actions"><a href="/api/export" class="button-link">Скачать CSV</a></div>
+    </header>
+    <div id="notice" tabindex="-1" class="notice" role="status" aria-live="polite" hidden></div>
+    <section class="import-panel" aria-labelledby="import-title">
+      <div>
+        <h2 id="import-title">Импорт обращений</h2>
+        <p>Загрузите список заявок. Приложение проверит контакты, пропустит повторы и поставит заявки с высоким приоритетом в начало очереди.</p>
+      </div>
+      <div class="import-actions">
+        <button type="button" id="demo" class="button-primary">Обработать пример</button>
+        <button type="button" id="choose-import" class="button-link">Выбрать JSON</button>
+        <input id="import-file" type="file" accept=".json,application/json" hidden>
+        <a href="/examples/request-batch.json" download>Скачать образец JSON</a>
+      </div>
+      <p id="import-notice" class="notice" tabindex="-1" hidden></p>
+      <details id="import-report" class="import-report" hidden>
+        <summary>Отчёт по строкам</summary>
+        <ol id="import-rows" role="list"></ol>
+      </details>
+    </section>
+    <div class="workspace">
+      <main id="queue" tabindex="-1">
+        <section class="queue-section" aria-labelledby="queue-title">
+          <div class="section-title"><h2 id="queue-title">Очередь</h2><a href="#new-request" class="mobile-add">Добавить заявку</a><span id="count" class="count"></span></div>
+          <div class="filters">
+            <label class="search-field"><span>Поиск</span><input id="search" type="search" placeholder="Имя, email или задача" autocomplete="off"></label>
+            <label><span>Статус</span><select id="status-filter"><option value="all">Все статусы</option><option value="new">Новые</option><option value="working">В работе</option><option value="done">Завершённые</option></select></label>
+            <label><span>Приоритет</span><select id="priority-filter"><option value="all">Любой</option><option value="high">Высокий</option><option value="normal">Обычный</option></select></label>
+          </div>
+          <div class="list-heading" aria-hidden="true"><span>Контакт и задача</span><span>Бюджет</span><span>Приоритет</span><span>Статус</span></div>
+          <div id="request-list" class="request-list" aria-live="polite"><p class="empty">Загружаем заявки…</p></div>
+        </section>
+        <section id="request-detail" tabindex="-1" hidden class="request-detail" aria-label="Содержание выбранной заявки"></section>
+        <details class="history"><summary>История действий <span id="event-count"></span></summary><div id="events"></div></details>
+      </main>
+      <aside class="form-panel" id="new-request" aria-labelledby="form-title">
+        <h2 id="form-title">Новая заявка</h2>
+        <p class="form-intro">Заполните контакт и задачу. Приоритет определится при сохранении.</p>
+        <form id="request-form">
+          <label><span>Имя <span class="required">*</span></span><input name="name" autocomplete="name" minlength="2" maxlength="120" required placeholder="Как обратиться"></label>
+          <label><span>Email <span class="required">*</span></span><input name="email" type="email" autocomplete="email" maxlength="254" required placeholder="name@example.com"></label>
+          <label><span>Компания</span><input name="company" autocomplete="organization" maxlength="160" placeholder="Необязательно"></label>
+          <label><span>Бюджет, ₽</span><input name="budget" type="number" min="0" max="1000000000000" step="any" inputmode="decimal" placeholder="Если известен"></label>
+          <label><span>Задача <span class="required">*</span></span><textarea name="message" minlength="10" maxlength="5000" rows="4" required placeholder="Что нужно сделать"></textarea></label>
+          <label class="checkbox"><input name="demo" type="checkbox"><span>Это учебный пример</span></label>
+          <button class="button-primary" type="submit">Добавить заявку</button>
+          <p class="notice" id="form-notice" tabindex="-1" hidden></p>
+          <p class="form-note">Повтор с тем же email и текстом не попадёт в очередь второй раз.</p>
+        </form>
+        <details class="rules"><summary>Как определяется приоритет</summary><p>Высокий: бюджет от 100 000 ₽ или слова «срочно», «сегодня», «горит», asap, urgent в задаче. Иначе — обычный.</p></details>
+      </aside>
+    </div>
+    <footer><span>Заявки сохраняются после перезапуска.</span><span>CSV содержит всю очередь, независимо от фильтров.</span></footer>
+  </div>
+</body>
+</html>
